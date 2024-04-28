@@ -1,20 +1,24 @@
-const sql = require('mssql');
+require('dotenv').config({ path: process.env.NODE_ENV === 'production' ? '.env.production' : '.env' });
+
+const { Pool } = require('pg');
 
 const config = {
-    user: 'gusadmin',
-    password: 'gusadmin',
-    server: 'localhost', 
-    database: 'dbshop',
-    options: {
-        encrypt: true,
-        trustServerCertificate: true
-    }
+    user: process.env.USER,
+    password: process.env.PASSWORD,
+    host: process.env.HOST,
+    database: process.env.DATABASE,
 };
 
-const poolPromise = sql.connect(config);
+const poolPromise = new Pool(config);
 
-poolPromise
-    .then(() => console.log('Connected to SQL Server'))
+poolPromise.connect()
+    .then(() => {
+        console.log('Connected to PostgreSQL');
+        return poolPromise.query('SELECT NOW()');
+    })
+    .then(result => {
+        console.log('Current time:', result.rows[0].now);
+    })
     .catch(err => console.error('Connection failed', err));
 
 module.exports = poolPromise;
