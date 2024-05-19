@@ -6,6 +6,7 @@ const cors = require('cors');
 const authController = require('./service/auth/authController');
 const productController = require('./routes/productos'); // Asegúrate de que esta ruta sea correcta
 const imagenproductController = require('./routes/productoimagen'); // Asegúrate de que esta ruta sea correcta
+const port = 3000;
 
 const app = express();
 
@@ -17,7 +18,9 @@ app.use('/auth', authController);
 app.use('/productos', productController); // Agrega el controlador de productos
 app.use('/imagen', imagenproductController); // Agrega el controlador de productos
 
-app.listen(3000);
+app.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}/`);
+  });
 
 //$env:NODE_ENV="development"; node app.js
 
