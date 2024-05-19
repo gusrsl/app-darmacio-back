@@ -20,6 +20,9 @@ poolPromise.connect()
     .then(result => {
         console.log('Current time:', result.rows[0].now);
     })
-    .catch(err => console.error('Connection failed', err));
+    .catch(err => {
+        console.error('Connection failed', err);
+        console.log(config);
+    });
 
 module.exports = poolPromise;
