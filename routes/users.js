@@ -1,17 +1,8 @@
-var express = require('express');
-var router = express.Router();
-var userService = require('../userService');
+var express = require('express')
+var router = express.Router()
+var userController = require('../controller/userController')
 
 /* GET users listing. */
-router.get('/', async function(req, res, next) {
-  try {
-    const users = await userService.getAllUsers();
-    res.json({users: users});
-  } catch (err) {
-    next(err);
-  }
-});
+router.get('/', userController.getAllUsers)
 
-
-
-module.exports = router;
+module.exports = router

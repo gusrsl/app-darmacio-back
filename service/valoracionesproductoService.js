@@ -1,41 +1,90 @@
-const db = require('../db');
+const {
+  executeQuery,
+  searchAll,
+  searchOne,
+  update,
+  deleteOne,
+} = require('../config/db')
 
 async function createProductRating(productRating) {
-    const pool = await db;
-    const request = pool.request();
-    await request.query(`INSERT INTO prd_valoraciones_producto (id, id_producto, valoracion, idestado) VALUES (${productRating.id}, ${productRating.id_producto}, ${productRating.valoracion}, ${productRating.idestado})`);
+  try {
+    const query = `
+        INSERT INTO prd_valoraciones_producto
+        (id_producto, valoracion, idestado)
+        VALUES ($1, $2, $3)`
+
+    await executeQuery(query, [
+      productRating.id_producto,
+      productRating.valoracion,
+      productRating.idestado,
+    ])
+  } catch (error) {
+    console.error('Error creating product rating:', error)
+    throw error
+  }
 }
 
 async function getAllProductRatings() {
-    const pool = await db;
-    const request = pool.request();
-    const result = await request.query('SELECT * FROM prd_valoraciones_producto');
-    return result.recordset;
+  try {
+    const query = `SELECT * FROM prd_valoraciones_producto`
+    const result = await searchAll(query)
+
+    return result
+  } catch (error) {
+    console.error('Error getting all product ratings:', error)
+    throw error
+  }
 }
 
 async function getProductRatingById(id) {
-    const pool = await db;
-    const request = pool.request();
-    const result = await request.query(`SELECT * FROM prd_valoraciones_producto WHERE id = ${id}`);
-    return result.recordset[0];
+  try {
+    const query = `SELECT * FROM prd_valoraciones_producto WHERE id = $1`
+    const result = await searchOne(query, [id])
+
+    return result
+  } catch (error) {
+    console.error('Error getting product rating by id:', error)
+    throw error
+  }
 }
 
 async function updateProductRating(id, productRating) {
-    const pool = await db;
-    const request = pool.request();
-    await request.query(`UPDATE prd_valoraciones_producto SET id_producto = ${productRating.id_producto}, valoracion = ${productRating.valoracion}, idestado = ${productRating.idestado} WHERE id = ${id}`);
+  try {
+    const query = `
+        UPDATE prd_valoraciones_producto
+        SET id_producto = $1,
+            valoracion = $2,
+            idestado = $3
+        WHERE id = $4
+    `
+
+    await update(query, [
+      productRating.id_producto,
+      productRating.valoracion,
+      productRating.idestado,
+      id,
+    ])
+  } catch (error) {
+    console.error('Error updating product rating:', error)
+    throw error
+  }
 }
 
 async function deleteProductRating(id) {
-    const pool = await db;
-    const request = pool.request();
-    await request.query(`DELETE FROM prd_valoraciones_producto WHERE id = ${id}`);
+  try {
+    const query = `DELETE FROM prd_valoraciones_producto WHERE id = $1`
+
+    await deleteOne(query, [id])
+  } catch (error) {
+    console.error('Error deleting product rating:', error)
+    throw error
+  }
 }
 
 module.exports = {
-    createProductRating,
-    getAllProductRatings,
-    getProductRatingById,
-    updateProductRating,
-    deleteProductRating
-};
+  createProductRating,
+  getAllProductRatings,
+  getProductRatingById,
+  updateProductRating,
+  deleteProductRating,
+}
