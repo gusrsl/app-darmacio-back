@@ -1,49 +1,20 @@
-const express = require('express');
-const router = express.Router();
-const productLikeService = require('../service/megustasproductoService');
+const express = require('express')
+const router = express.Router()
+const productLikeController = require('../controller/productLikeController')
 
 // Obtener todos los "me gusta" de productos
-router.get('/', async (req, res) => {
-    const productLikes = await productLikeService.getAllProductLikes();
-    res.json(productLikes);
-});
+router.get('/', productLikeController.getAllProductLikes)
 
 // Obtener un "me gusta" de producto por ID
-router.get('/:id', async (req, res) => {
-    const productLike = await productLikeService.getProductLikeById(req.params.id);
-    if (productLike) {
-        res.json(productLike);
-    } else {
-        res.status(404).send('Me gusta de producto no encontrado');
-    }
-});
+router.get('/:id', productLikeController.getProductLikeById)
 
 // Crear un nuevo "me gusta" de producto
-router.post('/', async (req, res) => {
-    const newProductLike = req.body;
-    const createdProductLike = await productLikeService.createProductLike(newProductLike);
-    res.status(201).json(createdProductLike);
-});
+router.post('/', productLikeController.createProductLike)
 
 // Actualizar un "me gusta" de producto
-router.put('/:id', async (req, res) => {
-    const updatedProductLike = req.body;
-    const result = await productLikeService.updateProductLike(req.params.id, updatedProductLike);
-    if (result) {
-        res.json(result);
-    } else {
-        res.status(404).send('Me gusta de producto no encontrado');
-    }
-});
+router.put('/:id', productLikeController.updateProductLike)
 
 // Eliminar un "me gusta" de producto
-router.delete('/:id', async (req, res) => {
-    const result = await productLikeService.deleteProductLike(req.params.id);
-    if (result) {
-        res.json(result);
-    } else {
-        res.status(404).send('Me gusta de producto no encontrado');
-    }
-});
+router.delete('/:id', productLikeController.deleteProductLike)
 
-module.exports = router;
+module.exports = router

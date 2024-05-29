@@ -1,25 +1,12 @@
-const express = require('express');
-const router = express.Router();
-const imageService = require('../service/imagenesService');
+const express = require('express')
+const router = express.Router()
+const imageController = require('../controller/imagesController')
+const { upload } = require('../middleware/multer')
 
-router.get('/', async (req, res) => {
-    const images = await imageService.getAllImages();
-    res.json(images);
-});
+router.get('/', imageController.getAllImages)
 
-router.get('/:id', async (req, res) => {
-    const image = await imageService.getImageById(req.params.id);
-    if (image) {
-        res.json(image);
-    } else {
-        res.status(404).send('Image not found');
-    }
-});
+router.get('/:id', imageController.getImageById)
 
-router.post('/', async (req, res) => {
-    const newImage = req.body;
-    const createdImage = await imageService.createImage(newImage);
-    res.status(201).json(createdImage);
-});
+router.post('/', upload.single('file'), imageController.createImage)
 
-module.exports = router;
+module.exports = router

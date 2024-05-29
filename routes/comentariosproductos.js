@@ -1,49 +1,20 @@
-const express = require('express');
-const router = express.Router();
-const productCommentService = require('../service/comentariosproductoService');
+const express = require('express')
+const router = express.Router()
+const comentariosProductosController = require('../controller/commentProducts')
 
 // Obtener todos los comentarios de productos
-router.get('/', async (req, res) => {
-    const productComments = await productCommentService.getAllProductComments();
-    res.json(productComments);
-});
+router.get('/', comentariosProductosController.getAllProductComments)
 
 // Obtener un comentario de producto por ID
-router.get('/:id', async (req, res) => {
-    const productComment = await productCommentService.getProductCommentById(req.params.id);
-    if (productComment) {
-        res.json(productComment);
-    } else {
-        res.status(404).send('Comentario de producto no encontrado');
-    }
-});
+router.get('/:id', comentariosProductosController.getProductCommentById)
 
 // Crear un nuevo comentario de producto
-router.post('/', async (req, res) => {
-    const newProductComment = req.body;
-    const createdProductComment = await productCommentService.createProductComment(newProductComment);
-    res.status(201).json(createdProductComment);
-});
+router.post('/', comentariosProductosController.createProductComment)
 
 // Actualizar un comentario de producto
-router.put('/:id', async (req, res) => {
-    const updatedProductComment = req.body;
-    const result = await productCommentService.updateProductComment(req.params.id, updatedProductComment);
-    if (result) {
-        res.json(result);
-    } else {
-        res.status(404).send('Comentario de producto no encontrado');
-    }
-});
+router.put('/:id', comentariosProductosController.updateProductComment)
 
 // Eliminar un comentario de producto
-router.delete('/:id', async (req, res) => {
-    const result = await productCommentService.deleteProductComment(req.params.id);
-    if (result) {
-        res.json(result);
-    } else {
-        res.status(404).send('Comentario de producto no encontrado');
-    }
-});
+router.delete('/:id', comentariosProductosController.deleteProductComment)
 
-module.exports = router;
+module.exports = router

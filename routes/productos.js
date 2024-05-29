@@ -1,54 +1,22 @@
-const express = require('express');
-const router = express.Router();
-const productService = require('../service/productoService');
+const express = require('express')
+const router = express.Router()
+const productController = require('../controller/productController')
 
 // Obtener todos los productos /productos
-router.get('/', async (req, res) => {
-    const products = await productService.getAllProducts();
-    res.json(products);
-});
+router.get('/', productController.getAllProducts)
 
-router.get('/destacados', async (req, res) => {
-    const products = await productService.getDestacProducts();
-    res.json(products);
-});
+router.get('/destacados', productController.getAllHighlightedProducts)
 
 // Obtener un producto por ID
-router.get('/:id', async (req, res) => {
-    const product = await productService.getProductById(req.params.id);
-    if (product) {
-        res.json(product);
-    } else {
-        res.status(404).send('Producto no encontrado');
-    }
-});
+router.get('/:id', productController.getProductById)
 
 // Crear un nuevo producto
-router.post('/', async (req, res) => {
-    const newProduct = req.body;
-    const createdProduct = await productService.createProduct(newProduct);
-    res.status(201).json(createdProduct);
-});
+router.post('/', productController.createProduct)
 
 // Actualizar un producto
-router.put('/:id', async (req, res) => {
-    const updatedProduct = req.body;
-    const result = await productService.updateProduct(req.params.id, updatedProduct);
-    if (result) {
-        res.json(result);
-    } else {
-        res.status(404).send('Producto no encontrado');
-    }
-});
+router.put('/:id', productController.updateProduct)
 
 // Eliminar un producto
-router.delete('/:id', async (req, res) => {
-    const result = await productService.deleteProduct(req.params.id);
-    if (result) {
-        res.json(result);
-    } else {
-        res.status(404).send('Producto no encontrado');
-    }
-});
+router.delete('/:id', productController.deleteProduct)
 
-module.exports = router;
+module.exports = router

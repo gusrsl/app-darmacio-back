@@ -1,49 +1,21 @@
-const express = require('express');
-const router = express.Router();
-const shippingService = require('../service/enviosService');
+const express = require('express')
+const router = express.Router()
+const shippingService = require('../service/enviosService')
+const shippingsController = require('../controller/enviosController')
 
 // Obtener todos los envíos
-router.get('/', async (req, res) => {
-    const shippings = await shippingService.getAllShippings();
-    res.json(shippings);
-});
+router.get('/', shippingsController.getAllShippings)
 
 // Obtener un envío por ID
-router.get('/:id', async (req, res) => {
-    const shipping = await shippingService.getShippingById(req.params.id);
-    if (shipping) {
-        res.json(shipping);
-    } else {
-        res.status(404).send('Envío no encontrado');
-    }
-});
+router.get('/:id', shippingsController.getShippingById)
 
 // Crear un nuevo envío
-router.post('/', async (req, res) => {
-    const newShipping = req.body;
-    const createdShipping = await shippingService.createShipping(newShipping);
-    res.status(201).json(createdShipping);
-});
+router.post('/', shippingsController.createShipping)
 
 // Actualizar un envío
-router.put('/:id', async (req, res) => {
-    const updatedShipping = req.body;
-    const result = await shippingService.updateShipping(req.params.id, updatedShipping);
-    if (result) {
-        res.json(result);
-    } else {
-        res.status(404).send('Envío no encontrado');
-    }
-});
+router.put('/:id', shippingsController.updateShipping)
 
 // Eliminar un envío
-router.delete('/:id', async (req, res) => {
-    const result = await shippingService.deleteShipping(req.params.id);
-    if (result) {
-        res.json(result);
-    } else {
-        res.status(404).send('Envío no encontrado');
-    }
-});
+router.delete('/:id', shippingsController.deleteShipping)
 
-module.exports = router;
+module.exports = router

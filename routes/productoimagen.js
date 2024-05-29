@@ -1,25 +1,11 @@
-const express = require('express');
-const router = express.Router();
-const productImageService = require('../service/productoimagenesService');
+const express = require('express')
+const router = express.Router()
+const productImageController = require('../controller/productImageController')
 
-router.get('/', async (req, res) => {
-    const productImages = await productImageService.getAllProductImages();
-    res.json(productImages);
-});
+router.get('/', productImageController.getAllProductImages)
 
-router.get('/:id', async (req, res) => {
-    const productImage = await productImageService.getProductImageById(req.params.id);
-    if (productImage) {
-        res.json(productImage);
-    } else {
-        res.status(404).send('Product image not found');
-    }
-});
+router.get('/:id', productImageController.getProductImageById)
 
-router.post('/', async (req, res) => {
-    const newProductImage = req.body;
-    const createdProductImage = await productImageService.createProductImage(newProductImage);
-    res.status(201).json(createdProductImage);
-});
+router.post('/', productImageController.createProductImage)
 
-module.exports = router;
+module.exports = router
