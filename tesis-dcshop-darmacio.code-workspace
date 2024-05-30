@@ -2,9 +2,6 @@
 	"folders": [
 		{
 			"path": "../front-shop-app"
-		},
-		{
-			"path": "."
 		}
 	],
 	"settings": {}
