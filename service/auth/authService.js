@@ -22,7 +22,7 @@ async function login(nombreUsuario, contrasena) {
       issuer: 'app-darmacio',
     })
 
-    return { auth: true, token: token }
+    return { auth: true, token: token, usuario: usuario, message: 'Login successful'}
   } catch (err) {
     console.error('Error logging in:', err)
     throw err
