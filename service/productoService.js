@@ -41,7 +41,7 @@ async function createProduct(product) {
 
 async function getAllProducts() {
   try {
-    const query = `SELECT * FROM prm_producto where producto_destacado = false`
+    const query = `SELECT * FROM prm_producto`
     const result = await searchAll(query)
 
     return result

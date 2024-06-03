@@ -40,8 +40,8 @@ async function getProductImageById(id) {
       inner join prm_imagenes i on i.id = pi.id_imagen
       WHERE id_producto = $1
     `
-    const result = await searchOne(query, [id])
-
+    const result = await searchAll(query, [id])
+    console.log(result)
     if (result) return result
 
     console.error(`No image found for product id (${id})`)
