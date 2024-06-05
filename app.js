@@ -25,6 +25,9 @@ const productViewRoutes = require('./routes/vistasproducto')
 
 const { handleErrors, notFound, securityPolicy } = require('./middleware')
 
+const paymentRoutes = require('./routes/paymentRoutes'); // Asegúrate de que esta ruta sea correcta
+
+
 const app = express()
 const port = configEnv.PORT
 
@@ -37,6 +40,8 @@ app.disable('x-powered-by')
 app.use(securityPolicy)
 
 // Routes
+
+app.use('/payments', paymentRoutes);
 app.use('/auth', authRoutes)
 app.use('/productos', productRoutes) // Agrega el controlador de productos
 app.use('/imagen', imagenproductRoutes) // Agrega el controlador de productos
