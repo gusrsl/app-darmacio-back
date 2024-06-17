@@ -5,6 +5,8 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const morgan = require('morgan')
+const swaggerUi = require('swagger-ui-express');
+const swaggerJsdoc = require('swagger-jsdoc');
 
 const { configEnv } = require('./config')
 
@@ -31,6 +33,26 @@ const paymentRoutes = require('./routes/paymentRoutes'); // Asegúrate de que es
 const app = express()
 const port = configEnv.PORT
 
+// Swagger options
+const swaggerOptions = {
+  swaggerDefinition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'API de mi aplicación',
+      version: '1.0.0',
+      description: 'Esta es la documentación de la API de mi aplicación',
+    },
+    servers: [
+      {
+        url: `https://api.gustavo-rodriguez.tech:${port}`,
+      },
+    ],
+  },
+  apis: ['./routes/*.js'],
+};
+
+const specs = swaggerJsdoc(swaggerOptions);
+
 // Middlewares
 app.use(cors({ origin: '*' }))
 app.use(bodyParser.json())
@@ -38,6 +60,9 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(morgan('dev'))
 app.disable('x-powered-by')
 app.use(securityPolicy)
+
+// Swagger UI
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
 // Routes
 

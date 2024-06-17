@@ -54,8 +54,57 @@ async function getAllUsers() {
   }
 }
 
+async function updateUser(user) {
+  try {
+    const contrasenaHashed = await bcrypt.hash(user.contrasena, 10)
+
+    const query = `UPDATE Usuarios SET
+    Contrasena = $1,
+    Correo = $2,
+    Nombre = $3,
+    Apellido = $4,
+    Direccion = $5,
+    Ciudad = $6,
+    Pais = $7,
+    CodigoPostal = $8,
+    Telefono = $9
+    WHERE NombreUsuario = $10`
+
+    await executeQuery(query, [
+      contrasenaHashed,
+      user.correo,
+      user.nombre,
+      user.apellido,
+      user.direccion,
+      user.ciudad,
+      user.pais,
+      user.codigoPostal,
+      user.telefono,
+      user.nombreUsuario,
+    ])
+  } catch (err) {
+    console.error('Error updating user:', err)
+    throw err
+  }
+}
+
+async function deleteUser(nombreUsuario) {
+  try {
+    const query = `DELETE FROM Usuarios WHERE NombreUsuario = $1`
+
+    await executeQuery(query, [nombreUsuario])
+  } catch (err) {
+    console.error('Error deleting user:', err)
+    throw err
+  }
+}
+
+
+
 module.exports = {
   createUser,
   findUser,
   getAllUsers,
+  updateUser,
+  deleteUser,
 }
