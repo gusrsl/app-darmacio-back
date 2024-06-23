@@ -4,7 +4,7 @@ const { Pool } = require('pg')
 const { configEnv } = require('../config')
 
 const config = {
-  // user: configEnv.USERDB,
+  user: configEnv.USERDB,
   password: configEnv.PASSWORD,
   host: configEnv.HOST,
   database: configEnv.DATABASE,
