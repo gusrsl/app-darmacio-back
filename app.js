@@ -1,37 +1,34 @@
-require('dotenv').config()
-//.config({ path: process.env.NODE_ENV === 'production' ? '.env.production' : '.env' });
-
-const express = require('express')
-const bodyParser = require('body-parser')
-const cors = require('cors')
-const morgan = require('morgan')
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const morgan = require('morgan');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
+const path = require('path');
 
-const { configEnv } = require('./config')
+const { configEnv } = require('./config');
 
-const authRoutes = require('./routes/auth')
-const productRoutes = require('./routes/productos') // Asegúrate de que esta ruta sea correcta
-const imagenproductRoutes = require('./routes/productoimagen') // Asegúrate de que esta ruta sea correcta
-const coloresRoutes = require('./routes/colores')
-const comentariosProductosRoutes = require('./routes/comentariosproductos')
-const enviosRoutes = require('./routes/envios')
-const imagesRoutes = require('./routes/imagenes')
-const measureRoutes = require('./routes/medidas')
-const porductLikeRoutes = require('./routes/megustasproducto')
-const offerRoutes = require('./routes/ofertas')
-const productMeasuresRoutes = require('./routes/productosmedidas')
-const userRoutes = require('./routes/users')
-const productRatingRoutes = require('./routes/valoracionesproducto')
-const productViewRoutes = require('./routes/vistasproducto')
+const authRoutes = require('./routes/auth');
+const productRoutes = require('./routes/productos');
+const imagenproductRoutes = require('./routes/productoimagen');
+const coloresRoutes = require('./routes/colores');
+const comentariosProductosRoutes = require('./routes/comentariosproductos');
+const enviosRoutes = require('./routes/envios');
+const imagesRoutes = require('./routes/imagenes'); // Aquí se importa la nueva ruta
+const measureRoutes = require('./routes/medidas');
+const porductLikeRoutes = require('./routes/megustasproducto');
+const offerRoutes = require('./routes/ofertas');
+const productMeasuresRoutes = require('./routes/productosmedidas');
+const userRoutes = require('./routes/users');
+const productRatingRoutes = require('./routes/valoracionesproducto');
+const productViewRoutes = require('./routes/vistasproducto');
 
-const { handleErrors, notFound, securityPolicy } = require('./middleware')
+const { handleErrors, notFound, securityPolicy } = require('./middleware');
 
-const paymentRoutes = require('./routes/paymentRoutes'); // Asegúrate de que esta ruta sea correcta
+const paymentRoutes = require('./routes/paymentRoutes');
 
-
-const app = express()
-const port = configEnv.PORT
+const app = express();
+const port = configEnv.PORT;
 
 // Swagger options
 const swaggerOptions = {
@@ -54,43 +51,41 @@ const swaggerOptions = {
 const specs = swaggerJsdoc(swaggerOptions);
 
 // Middlewares
-app.use(cors({ origin: '*' }))
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }))
-app.use(morgan('dev'))
-app.disable('x-powered-by')
-app.use(securityPolicy)
+app.use(cors({ origin: '*' }));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(morgan('dev'));
+app.disable('x-powered-by');
+app.use(securityPolicy);
 
 // Swagger UI
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
-// Routes
+// Servir imágenes de la carpeta 'uploads'
+app.use('/images', express.static(path.join(__dirname, 'uploads')));
 
+// Routes
 app.use('/payments', paymentRoutes);
-app.use('/auth', authRoutes)
-app.use('/productos', productRoutes) // Agrega el controlador de productos
-app.use('/imagen', imagenproductRoutes) // Agrega el controlador de productos
-app.use('/colores', coloresRoutes)
-app.use('/comentarios-productos', comentariosProductosRoutes)
-app.use('/envios', enviosRoutes)
-app.use('/imagenes', imagesRoutes)
-app.use('/medidas', measureRoutes)
-app.use('/megusta-producto', porductLikeRoutes)
-app.use('/ofertas', offerRoutes)
-app.use('/productos-medidas', productMeasuresRoutes)
-app.use('/users', userRoutes)
-app.use('/valoraciones-producto', productRatingRoutes)
-app.use('/vistas-producto', productViewRoutes)
+app.use('/auth', authRoutes);
+app.use('/productos', productRoutes);
+app.use('/imagen', imagenproductRoutes);
+app.use('/colores', coloresRoutes);
+app.use('/comentarios-productos', comentariosProductosRoutes);
+app.use('/envios', enviosRoutes);
+app.use('/imagenes', imagesRoutes); // Aquí se usa la nueva ruta
+app.use('/medidas', measureRoutes);
+app.use('/megusta-producto', porductLikeRoutes);
+app.use('/ofertas', offerRoutes);
+app.use('/productos-medidas', productMeasuresRoutes);
+app.use('/users', userRoutes);
+app.use('/valoraciones-producto', productRatingRoutes);
+app.use('/vistas-producto', productViewRoutes);
 
 // Handle errors
-app.use(notFound)
-app.use(handleErrors)
+app.use(notFound);
+app.use(handleErrors);
 
 // Start server
 app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}/`)
-})
-
-//$env:NODE_ENV="development"; node app.js
-
-//$env:NODE_ENV="production"; node app.js
+  console.log(`Server running at http://localhost:${port}/`);
+});
