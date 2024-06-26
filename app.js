@@ -72,7 +72,10 @@ app.use('/imagen', imagenproductRoutes);
 app.use('/colores', coloresRoutes);
 app.use('/comentarios-productos', comentariosProductosRoutes);
 app.use('/envios', enviosRoutes);
+
 app.use('/imagenes', imagesRoutes); // Aquí se usa la nueva ruta
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 app.use('/medidas', measureRoutes);
 app.use('/megusta-producto', porductLikeRoutes);
 app.use('/ofertas', offerRoutes);
