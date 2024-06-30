@@ -22,6 +22,9 @@ const productMeasuresRoutes = require('./routes/productosmedidas');
 const userRoutes = require('./routes/users');
 const productRatingRoutes = require('./routes/valoracionesproducto');
 const productViewRoutes = require('./routes/vistasproducto');
+const emailRoutes = require('./routes/sendmail');
+const pedidoRoutes = require('./routes/pedidos'); // Añade esta línea para incluir las rutas de pedidos
+
 
 const { handleErrors, notFound, securityPolicy } = require('./middleware');
 
@@ -83,6 +86,9 @@ app.use('/productos-medidas', productMeasuresRoutes);
 app.use('/users', userRoutes);
 app.use('/valoraciones-producto', productRatingRoutes);
 app.use('/vistas-producto', productViewRoutes);
+app.use('/email', emailRoutes);
+app.use(pedidoRoutes); // Añade esta línea para incluir las rutas de pedidos
+
 
 // Handle errors
 app.use(notFound);
