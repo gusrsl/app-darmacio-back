@@ -1,50 +1,97 @@
-const imageService = require('../service/imagenesService')
+const {
+  uploadImage,
+  deleteImage,
+  getImageById,
+  getProductImages,
+} = require('../service/imagenesService');
+const multer = require('multer');
+const path = require('path');
 
-const getAllImages = async (_req, res, next) => {
-  try {
-    const images = await imageService.getAllImages()
-
-    res.status(200).json(images)
-  } catch (error) {
-    next(error)
+// Configuración de almacenamiento de multer
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname)); // Renombrar el archivo con la fecha actual
   }
-}
+});
 
-const getImageById = async (req, res, next) => {
-  try {
-    const { id } = req.params
-    const image = await imageService.getImageById(id)
+const upload = multer({
+  storage: storage,
+  fileFilter: (req, file, cb) => {
+    const filetypes = /jpeg|jpg|png/;
+    const mimetype = filetypes.test(file.mimetype);
+    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
 
-    if (!image) {
-      res.status(404).json({ message: 'Image not found' })
-      return
+    if (mimetype && extname) {
+      return cb(null, true);
+    } else {
+      cb(new Error('Error: Solo imágenes (jpeg, jpg, png) son permitidas'));
+    }
+  }
+}).single('image');
+
+async function handleUpload(req, res) {
+  upload(req, res, async (uploadError) => {
+    if (uploadError) {
+      return res.status(400).send({ status: false, message: uploadError.message });
     }
 
-    res.status(200).json(image)
-  } catch (error) {
-    next(error)
-  }
-}
-
-const createImage = async (req, res, next) => {
-  try {
-    const { file } = req
-    const { ...newImage } = req.body
-
-    const image = {
-      ...newImage,
-      binario_img: file.buffer,
-
-      ruta_img: file.originalname,
+    try {
+      const result = await uploadImage(req);
+      res.send({
+        status: true,
+        message: 'Archivo subido y relacionado exitosamente',
+        data: result
+      });
+    } catch (err) {
+      console.error('Error al procesar la solicitud:', err);
+      res.status(500).send({ status: false, message: 'Error al procesar la solicitud', error: err.message });
     }
-    await imageService.createImage(image)
+  });
+}
 
-    res.status(201).json({
-      message: 'Image created successfully',
-    })
-  } catch (error) {
-    next(error)
+async function handleDelete(req, res) {
+  try {
+    await deleteImage(req.params.id);
+    res.send({
+      status: true,
+      message: 'Imagen eliminada exitosamente',
+    });
+  } catch (err) {
+    console.error('Error al eliminar la imagen:', err);
+    res.status(500).send({
+      status: false,
+      message: 'Error al eliminar la imagen',
+      error: err.message
+    });
   }
 }
 
-module.exports = { getAllImages, getImageById, createImage }
+async function handleGetImage(req, res) {
+  try {
+    const filePath = await getImageById(req.params.id);
+    res.sendFile(filePath);
+  } catch (err) {
+    console.error('Error al consultar la imagen:', err);
+    res.status(500).send({ status: false, message: 'Error al procesar la solicitud', error: err.message });
+  }
+}
+
+async function handleGetProductImages(req, res) {
+  try {
+    const imagesUrls = await getProductImages(req);
+    res.send({ status: true, images: imagesUrls });
+  } catch (err) {
+    console.error('Error al consultar las imágenes del producto:', err);
+    res.status(500).send({ status: false, message: 'Error al procesar la solicitud', error: err.message });
+  }
+}
+
+module.exports = {
+  handleUpload,
+  handleDelete,
+  handleGetImage,
+  handleGetProductImages,
+};

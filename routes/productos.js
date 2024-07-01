@@ -1,6 +1,6 @@
-const express = require('express')
-const router = express.Router()
-const productController = require('../controller/productController')
+const express = require('express');
+const router = express.Router();
+const productController = require('../controller/productController');
 
 /**
  * @swagger
@@ -18,7 +18,7 @@ const productController = require('../controller/productController')
  *               items:
  *                 $ref: '#/components/schemas/Product'
  */
-router.get('/', productController.getAllProducts)
+router.get('/', productController.getAllProducts);
 
 /**
  * @swagger
@@ -36,7 +36,7 @@ router.get('/', productController.getAllProducts)
  *               items:
  *                 $ref: '#/components/schemas/Product'
  */
-router.get('/destacados', productController.getAllHighlightedProducts)
+router.get('/destacados', productController.getAllHighlightedProducts);
 
 /**
  * @swagger
@@ -58,7 +58,7 @@ router.get('/destacados', productController.getAllHighlightedProducts)
  *             schema:
  *               $ref: '#/components/schemas/Product'
  */
-router.get('/:id', productController.getProductById)
+router.get('/:id', productController.getProductById);
 
 /**
  * @swagger
@@ -80,7 +80,7 @@ router.get('/:id', productController.getProductById)
  *             schema:
  *               $ref: '#/components/schemas/Product'
  */
-router.post('/', productController.createProduct)
+router.post('/', productController.createProduct);
 
 /**
  * @swagger
@@ -108,7 +108,7 @@ router.post('/', productController.createProduct)
  *             schema:
  *               $ref: '#/components/schemas/Product'
  */
-router.put('/:id', productController.updateProduct)
+router.put('/:id', productController.updateProduct);
 
 /**
  * @swagger
@@ -126,6 +126,6 @@ router.put('/:id', productController.updateProduct)
  *       200:
  *         description: El producto ha sido eliminado correctamente
  */
-router.delete('/:id', productController.deleteProduct)
+router.delete('/:id', productController.deleteProduct);
 
-module.exports = router
+module.exports = router;

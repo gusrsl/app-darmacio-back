@@ -4,7 +4,10 @@ const {
   searchOne,
   update,
   deleteOne,
+  poolPromise
 } = require('../config/db')
+
+const DEFAULT_IMAGE_URL = 'https://placehold.co/300x250';
 
 async function createProduct(product) {
   const query = `
@@ -39,34 +42,49 @@ async function createProduct(product) {
   }
 }
 
-async function getAllProducts() {
+async function getAllProducts(protocol, host) {
   try {
     const query = `SELECT * FROM prm_producto`
     const result = await searchAll(query)
 
-    return result
+    const productsWithImages = await Promise.all(result.map(async product => {
+      const images = await getProductImages(product.uu_id, protocol, host)
+      return { ...product, images }
+    }))
+
+    return productsWithImages
   } catch (error) {
     console.error('Error getting all products:', error)
     throw error
   }
 }
 
-async function getDestacProducts() {
+async function getDestacProducts(protocol, host) {
   try {
     const query = `SELECT * FROM prm_producto where producto_destacado = true`
     const result = await searchAll(query)
 
-    return result
+    const productsWithImages = await Promise.all(result.map(async product => {
+      const images = await getProductImages(product.uu_id, protocol, host)
+      return { ...product, images }
+    }))
+
+    return productsWithImages
   } catch (error) {
     console.error('Error getting destac products:', error)
     throw error
   }
 }
 
-async function getProductById(id) {
+async function getProductById(id, protocol, host) {
   try {
     const query = 'SELECT * FROM prm_producto WHERE uu_id = $1'
     const result = await searchOne(query, [id])
+
+    if (result) {
+      const images = await getProductImages(result.uu_id, protocol, host)
+      result.images = images
+    }
 
     return result
   } catch (error) {
@@ -118,6 +136,38 @@ async function deleteProduct(id) {
   } catch (error) {
     console.error('Error deleting product:', error)
     throw error
+  }
+}
+
+async function getProductImages(productId, protocol, host) {
+  const client = await poolPromise.connect()
+  try {
+    const selectImagesQuery = `
+      SELECT 
+      i.id,
+      i.nombre_archivo
+      FROM prm_imagenes i
+      INNER JOIN prd_producto_imagenes pip ON i.id = pip.id_imagen
+      WHERE pip.id_producto = $1;
+    `
+    const result = await client.query(selectImagesQuery, [productId])
+
+    if (result.rows.length === 0) {
+      return [DEFAULT_IMAGE_URL]
+    }
+
+    const imagesUrls = result.rows.map(row => {
+      const idimagen = row.id
+      const imageUrl = `${protocol}://${host}/imagenes/image/${idimagen}`
+      return imageUrl
+    })
+
+    return imagesUrls
+  } catch (err) {
+    console.error('Error getting product images:', err)
+    throw err
+  } finally {
+    client.release()
   }
 }
 
