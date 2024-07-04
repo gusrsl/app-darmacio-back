@@ -8,6 +8,6 @@ router.get('/pedidos', pedidoController.getAllPedidos);
 router.put('/pedidos/:id', pedidoController.updatePedido);
 router.delete('/pedidos/:id', pedidoController.deletePedido);
 router.get('/pedidosreport', pedidoController.getPedidosReport);
-
+router.put('/pedidos/:id/toggle-estado', pedidoController.togglePedidoEstado);
 
 module.exports = router;

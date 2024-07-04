@@ -7,8 +7,8 @@ async function createUser(user) {
 
     const query = `INSERT INTO Usuarios
     (NombreUsuario, Contrasena, Correo, Nombre, Apellido, Direccion,
-    Ciudad, Pais, CodigoPostal, Telefono, FechaCreacion, EstaActivo)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW(), true)`
+    Ciudad, Pais, CodigoPostal, Telefono, FechaCreacion, EstaActivo, type)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW(), true, 'user')`
 
     await executeQuery(query, [
       user.nombreUsuario,

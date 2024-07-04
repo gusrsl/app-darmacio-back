@@ -30,9 +30,16 @@ const createPedido = async (pedido) => {
 };
 
 const getPedidoById = async (id) => {
-  const queryText = 'SELECT * FROM prc_pedidos WHERE id = $1';
+  const queryText = `
+  select 
+    * 
+  from prc_pedidos p
+  inner join usuarios u on u.id = p.user_id
+  where u.id = $1
+  order by p.id
+  `;
   const { rows } = await poolPromise.query(queryText, [id]);
-  return rows[0];
+  return rows;
 };
 
 const getAllPedidos = async () => {
@@ -74,24 +81,46 @@ const getPedidosReport = async () => {
   const client = await poolPromise.connect();
   try {
     const queryText = `
-      SELECT
-    pe.id,
-    CONCAT(us.nombre, ' ', us.apellido) AS nombre_completo,
-    pe.fecha_pedido,
-    pe.estado,
-    us.ciudad,
-    us.correo,
-    us.codigopostal,
-    us.direccion,
-    pe.subtotal,
-    pe.total
-FROM prc_pedidos pe
-INNER JOIN usuarios us ON us.id = pe.user_id
-LEFT JOIN detalle_pedidos dp ON dp.pedido_id = pe.id
-ORDER BY pe.id DESC;
+    SELECT
+      pe.id,
+      CONCAT(MAX(us.nombre), ' ', MAX(us.apellido)) AS nombre_completo,
+      MAX(pe.fecha_pedido) AS fecha_pedido,
+      MAX(pe.estado) AS estado,
+      MAX(us.ciudad) AS ciudad,
+      MAX(us.correo) AS correo,
+      MAX(us.codigopostal) AS codigopostal,
+      MAX(us.direccion) AS direccion,
+      MAX(pe.subtotal) AS subtotal,
+      MAX(pe.total) AS total,
+      ARRAY_AGG(dp.producto_id) AS productos
+    FROM prc_pedidos pe
+    INNER JOIN usuarios us ON us.id = pe.user_id
+    LEFT JOIN detalle_pedidos dp ON dp.pedido_id = pe.id
+    GROUP BY pe.id
+    ORDER BY pe.id DESC;
 `;
     const { rows } = await client.query(queryText);
     return rows;
+  } catch (error) {
+    throw error;
+  } finally {
+    client.release();
+  }
+};
+
+const togglePedidoEstado = async (id) => {
+  const client = await poolPromise.connect();
+  try {
+    const queryGetEstado = 'SELECT estado FROM prc_pedidos WHERE id = $1';
+    const res = await client.query(queryGetEstado, [id]);
+    const currentEstado = res.rows[0].estado;
+
+    const newEstado = currentEstado === 'pendiente' ? 'entregado' : 'pendiente';
+
+    const queryUpdateEstado = 'UPDATE prc_pedidos SET estado = $1 WHERE id = $2 RETURNING *';
+    const updateRes = await client.query(queryUpdateEstado, [newEstado, id]);
+
+    return updateRes.rows[0];
   } catch (error) {
     throw error;
   } finally {
@@ -105,6 +134,7 @@ module.exports = {
   getAllPedidos,
   updatePedido,
   deletePedido,
+  togglePedidoEstado,
   getPedidosReport, // Agregar esta línea para exportar la nueva función
 
 };

@@ -68,6 +68,18 @@ const getPedidosReport = async (req, res) => {
       res.status(500).json({ message: 'Error al obtener el reporte de pedidos' });
     }
   };
+
+    // Nuevo método para cambiar el estado de un pedido
+  const togglePedidoEstado = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updatedPedido = await pedidoService.togglePedidoEstado(id);
+      res.status(200).json(updatedPedido);
+    } catch (error) {
+      console.error('Error al cambiar el estado del pedido:', error);
+      res.status(500).json({ message: 'Error al cambiar el estado del pedido' });
+    }
+  };
   
 
 module.exports = {
@@ -76,6 +88,7 @@ module.exports = {
   getAllPedidos,
   updatePedido,
   deletePedido,
+  togglePedidoEstado,
   getPedidosReport, // Agregar esta línea para exportar el nuevo método
 
 };
