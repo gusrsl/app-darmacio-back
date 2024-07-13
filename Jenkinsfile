@@ -11,6 +11,16 @@ pipeline {
                 }
             }
         }
+        stage('Test Backend') {
+            steps {
+                script {
+                    dir('/var/lib/jenkins/workspace/deploy-back-pipeline') {
+                        // Ejecutar tests
+                        sh 'npm test'
+                    }
+                }
+            }
+        }
         stage('Deploy Backend') {
             steps {
                 script {
