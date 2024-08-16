@@ -158,7 +158,7 @@ async function getProductImages(productId, protocol, host) {
 
     const imagesUrls = result.rows.map(row => {
       const idimagen = row.id;
-      const imageUrl = `${protocol}://${host}/imagenes/image/${idimagen}`;
+      const imageUrl = `https://${host}/imagenes/image/${idimagen}`;
       return imageUrl;
     });
 
