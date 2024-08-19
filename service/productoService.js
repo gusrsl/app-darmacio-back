@@ -147,7 +147,7 @@ async function getProductImages(productId, protocol, host) {
       i.id,
       i.nombre_archivo
       FROM prm_imagenes i
-      INNER JOIN prd_producto_imagenes pip ON i.id = pip.id_imagen
+      left JOIN prd_producto_imagenes pip ON i.id = pip.id_imagen
       WHERE pip.id_producto = $1;
     `;
     const result = await client.query(selectImagesQuery, [productId]);
