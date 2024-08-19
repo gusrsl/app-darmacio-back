@@ -11,7 +11,7 @@ const sendOrderEmails = (req, res) => {
     }
   
     //Responder inmediatamente al cliente
-    // res.status(202).json({ message: 'Proceso de envío de correos iniciado' });
+    //res.status(202).json({ message: 'Proceso de envío de correos iniciado' });
 
     // Procesar el envío de correos de manera asíncrona
     const adminEmail = process.env.ADMIN_EMAIL;

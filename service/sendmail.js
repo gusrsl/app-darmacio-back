@@ -19,11 +19,12 @@ const transporter = nodemailer.createTransport({
 // Función para generar el contenido HTML del correo para el administrador
 const generateAdminEmailHtml = (orderDetails) => {
   // Generar filas de productos
-  const productRows = orderDetails.products.map(product => `
+  console.log(orderDetails)
+  const productRows = orderDetails.cart.map(item => `
     <tr>
-      <td style="border: 1px solid #ddd; padding: 8px;">${product.name}</td>
-      <td style="border: 1px solid #ddd; padding: 8px;">${product.quantity}</td>
-      <td style="border: 1px solid #ddd; padding: 8px;">${product.price}</td>
+      <td style="border: 1px solid #ddd; padding: 8px;">${item.product.descripcion}</td>
+      <td style="border: 1px solid #ddd; padding: 8px;">${item.quantity}</td>
+      <td style="border: 1px solid #ddd; padding: 8px;">${item.product.precio}</td>
     </tr>
   `).join('');
 
@@ -56,11 +57,11 @@ const generateAdminEmailHtml = (orderDetails) => {
 // Función para generar el contenido HTML del correo para el cliente
 const generateCustomerEmailHtml = (orderDetails) => {
   // Generar filas de productos
-  const productRows = orderDetails.products.map(product => `
+  const productRows = orderDetails.cart.map(item => `
     <tr>
-      <td style="border: 1px solid #ddd; padding: 8px;">${product.name}</td>
-      <td style="border: 1px solid #ddd; padding: 8px;">${product.quantity}</td>
-      <td style="border: 1px solid #ddd; padding: 8px;">${product.price}</td>
+      <td style="border: 1px solid #ddd; padding: 8px;">${item.product.descripcion}</td>
+      <td style="border: 1px solid #ddd; padding: 8px;">${item.quantity}</td>
+      <td style="border: 1px solid #ddd; padding: 8px;">${item.product.precio}</td>
     </tr>
   `).join('');
 
